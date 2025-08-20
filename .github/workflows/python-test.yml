@@ -1,4 +1,4 @@
-name: Deploy API
+name: Run Python tests
 
 on:
   push:
@@ -25,4 +25,20 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest --cov=src --cov-report=term-missing
+        run: pytest --cov=src --cov-report=term-missing --cov-report=json:.coverage.json
+
+      - name: Check if coverage is >= 90%
+        run: |
+          set -e
+
+          json=$(< .coverage.json)
+          coverage=$(
+            echo $json \
+            | grep -oE '"totals": \{[^}]*"percent_covered": ?[0-9]+' \
+            | grep -oE "[0-9]+$"
+          )
+
+          if [[ $coverage -lt 90 ]]; then
+            echo "Did not meet coverage threshold (got $coverage%, expected at least 90%)"
+            exit 1
+          fi
