@@ -1,3 +1,5 @@
+from src.juego.validador_apuesta import ValidadorApuesta
+
 #TEST DE CANTIDADES Y PINTAS
 def test_pinta_mayor():
     pinta = 7
