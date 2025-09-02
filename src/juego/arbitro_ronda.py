@@ -23,3 +23,7 @@ class ArbitroRonda:
             return ResultadoDuda.GANA  # Duda correcta
         else:
             return ResultadoDuda.PIERDE  # Duda incorrecta
+
+    def puede_calzar(self, cantidad_apostada: int) -> bool:
+        cantidad_jugador = len(self.contador.valores_dados)
+        return cantidad_jugador == 1 or cantidad_jugador >= cantidad_apostada / 2
