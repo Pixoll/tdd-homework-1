@@ -39,3 +39,21 @@ def test_cacho_remover_dados():
     assert cacho.cantidad_dados == 1
     cacho.remover_dado()
     assert cacho.cantidad_dados == 0
+
+
+def test_cacho_agregar_dados():
+    cacho = Cacho()
+    cacho.agregar_dado(Dado())
+    assert cacho.cantidad_dados == 6
+
+
+def test_cacho_agregar_y_remover_dados():
+    cacho = Cacho()
+    cacho.remover_dado()
+    assert cacho.cantidad_dados == 4
+    cacho.agregar_dado(Dado())
+    assert cacho.cantidad_dados == 5
+    cacho.agregar_dado(Dado())
+    assert cacho.cantidad_dados == 6
+    cacho.remover_dado()
+    assert cacho.cantidad_dados == 5
