@@ -23,3 +23,10 @@ class GestorPartidas:
             raise RuntimeError("Debes llamar primero a determinar_inicial()")
         self._turno_actual = (self._turno_actual + 1) % len(self.jugadores)
         return self.jugadores[self._turno_actual]
+
+    def jugadores_con_un_dado(self) -> list[str]:
+        return [
+            nombre
+            for nombre, cacho in zip(self.jugadores, self.cachos)
+            if cacho.cantidad_dados == 1
+        ]
