@@ -1,4 +1,4 @@
-from src.juego.arbitro_ronda import ArbitroRonda
+from src.juego.arbitro_ronda import ArbitroRonda, ResultadoDuda
 from src.juego.cacho import Cacho
 from src.juego.contador_pintas import ContadorPintas
 from src.juego.dado import Dado
@@ -14,7 +14,7 @@ def test_duda_correcta_gana_jugador():
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
     # 2 de pinta 2 + 0 As como comodín > 1, jugador que duda pierde
-    assert resultado == "jugador_pierde"
+    assert resultado == ResultadoDuda.PIERDE
 
 
 # Test: duda exacta (calzar)
@@ -26,7 +26,7 @@ def test_duda_correcta_calzar():
     cantidad_apostada = 3  # 2 de pinta 2 + 1 As como comodín
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
-    assert resultado == "calzar"
+    assert resultado == ResultadoDuda.CALZAR
 
 
 # Test: duda con ases como comodín
@@ -39,7 +39,7 @@ def test_duda_con_ases_como_comodin():
     pinta = 3
     resultado = arbitro.dudar(cantidad_apostada, pinta)
     # 1 de pinta 3 + 2 ases (comodín máximo) = 3 > 2, jugador que duda pierde
-    assert resultado == "jugador_pierde"
+    assert resultado == ResultadoDuda.PIERDE
 
 
 # Test: duda sin ases, apuesta exacta
@@ -51,7 +51,7 @@ def test_duda_sin_ases_apuesta_exacta():
     cantidad_apostada = 2
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
-    assert resultado == "calzar"
+    assert resultado == ResultadoDuda.CALZAR
 
 
 # Test: duda con apuesta menor y ases presentes
@@ -64,7 +64,7 @@ def test_duda_con_ases_apuesta_menor():
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
     # 2 de pinta 2 + 1 As como comodín = 3 > 1, jugador que duda pierde
-    assert resultado == "jugador_pierde"
+    assert resultado == ResultadoDuda.PIERDE
 
 
 def test_duda_con_ases_apuesta_mayor():
@@ -75,4 +75,4 @@ def test_duda_con_ases_apuesta_mayor():
     cantidad_apostada = 3
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
-    assert resultado == "jugador_gana"
+    assert resultado == ResultadoDuda.GANA

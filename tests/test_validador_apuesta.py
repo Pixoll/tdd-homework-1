@@ -155,3 +155,19 @@ def test_disminucion_cantidad_misma_pinta_valido():
     cantidad_nueva = 2
     valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
     assert valido == True
+
+
+def test_apuesta_invalida():
+    pinta = 0
+    cantidad = 0
+    valido = ValidadorApuesta.validar_apuesta(pinta, cantidad)
+    assert valido == False
+
+
+def test_aumento_apuesta_distintas_cantidades():
+    pinta_actual = 2
+    cantidad_actual = 1
+    pinta_nueva = 3
+    cantidad_nueva = 1
+    valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    assert valido == True
