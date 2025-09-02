@@ -4,20 +4,17 @@ from src.juego.validador_apuesta import ValidadorApuesta
 # Test constructor y rangos (cantidad y pinta, rework)
 def test_pinta_mayor():
     pinta = 7
-    cantidad = 3
     aceptado = ValidadorApuesta.verificar_rango_pinta(pinta)
     assert aceptado == False
 
 
 def test_pinta_menor():
     pinta = 0
-    cantidad = 3
     aceptado = ValidadorApuesta.verificar_rango_pinta(pinta)
     assert aceptado == False
 
 
 def test_cantidad_menor():
-    pinta = 3
     cantidad = -1
     aceptado = ValidadorApuesta.verificar_rango_cantidad(cantidad)
     assert aceptado == False
@@ -43,79 +40,45 @@ def test_constructor():
 
 # Test regla de los Ases
 def test_cambiar_a_ases_cantidad_par():
-    pinta_actual = 3
     cantidad_actual = 8
-
-    pinta_nueva = 1
     cantidad_esperada = 5
-
-    confirmado = ValidadorApuesta.cambio_to_ases(pinta_actual, cantidad_actual, pinta_nueva)
-    assert confirmado == (cantidad_esperada, True)
+    valor = ValidadorApuesta.cambio_a_ases(cantidad_actual)
+    assert valor == cantidad_esperada
 
 
 def test_cambiar_a_ases_cantidad_impar():
-    pinta_actual = 3
     cantidad_actual = 7
-
-    pinta_nueva = 1
     cantidad_esperada = 4
-
-    aceptado = ValidadorApuesta.cambio_to_ases(pinta_actual, cantidad_actual, pinta_nueva)
-    assert aceptado == (cantidad_esperada, True)
-
-
-def test_cambio_a_ases_pinta_distinto_a_1():
-    pinta_actual = 3
-    cantidad_actual = 8
-    pinta_nueva = 2
-
-    resultado = ValidadorApuesta.cambio_to_ases(pinta_actual, cantidad_actual, pinta_nueva)
-    assert resultado == (8, False)
+    valor = ValidadorApuesta.cambio_a_ases(cantidad_actual)
+    assert valor == cantidad_esperada
 
 
 def test_cambiar_de_ases_cantidad_par():
-    pinta_actual = 1
     cantidad_actual = 2
-
-    pinta_nueva = 3
     cantidad_esperada = 5
-
-    aceptado = ValidadorApuesta.cambio_de_ashes(pinta_actual, cantidad_actual, pinta_nueva)
-    assert aceptado == (cantidad_esperada, True)
+    aceptado = ValidadorApuesta.cambio_desde_ases(cantidad_actual)
+    assert aceptado == cantidad_esperada
 
 
 def test_cambiar_de_ases_cantidad_impar():
-    pinta_actual = 1
     cantidad_actual = 3
-
-    pinta_nueva = 3
     cantidad_esperada = 7
-
-    aceptado = ValidadorApuesta.cambio_de_ashes(pinta_actual, cantidad_actual, pinta_nueva)
-    assert aceptado == (cantidad_esperada, True)
-
-
-def test_cambio_de_ases_pinta_distinto_a_1():
-    pinta_actual = 2
-    cantidad_actual = 5
-    pinta_nueva = 3
-
-    resultado = ValidadorApuesta.cambio_de_ashes(pinta_actual, cantidad_actual, pinta_nueva)
-    assert resultado == (5, False)
+    aceptado = ValidadorApuesta.cambio_desde_ases(cantidad_actual)
+    assert aceptado == cantidad_esperada
 
 
 # Test reglas basicas.
 def test_no_partir_con_varios_as():
     pinta = 1
     cantidad = 3
-    aceptado = ValidadorApuesta.validar_apuesta(pinta, cantidad)
+    aceptado = ValidadorApuesta.validar_primera_apuesta(pinta, cantidad, jugador_tiene_un_dado=False)
     assert aceptado == False
 
 
 def test_partir_solo_con_un_as():
     pinta = 1
     cantidad = 1
-    aceptado = ValidadorApuesta.validar_apuesta(pinta, cantidad)
+    aceptado = ValidadorApuesta.validar_primera_apuesta(pinta, cantidad, jugador_tiene_un_dado=True)
     assert aceptado == True
 
 
@@ -148,19 +111,28 @@ def test_aumento_cantidad_misma_pinta_valido():
     assert valido == True
 
 
-def test_disminucion_cantidad_misma_pinta_valido():
-    pinta_actual = 3
-    cantidad_actual = 2
-    pinta_nueva = 3
+def test_cambio_especial_a_ases():
+    pinta_actual = 2
+    pinta_nueva = 1
+    cantidad_actual = 3
     cantidad_nueva = 2
     valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
-    assert valido == True
+    return valido == True
+
+
+def test_cambio_especial_desde_ases():
+    pinta_actual = 1
+    pinta_nueva = 2
+    cantidad_actual = 2
+    cantidad_nueva = 5
+    valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    return valido == True
 
 
 def test_apuesta_invalida():
     pinta = 0
     cantidad = 0
-    valido = ValidadorApuesta.validar_apuesta(pinta, cantidad)
+    valido = ValidadorApuesta.validar_apuesta_general(pinta, cantidad)
     assert valido == False
 
 
