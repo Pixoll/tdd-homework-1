@@ -76,3 +76,28 @@ def test_duda_con_ases_apuesta_mayor():
     pinta = 2
     resultado = arbitro.dudar(cantidad_apostada, pinta)
     assert resultado == ResultadoDuda.GANA
+
+
+def test_si_puede_calzar():
+    cacho = Cacho([Dado(1), Dado(2), Dado(3), Dado(4), Dado(5)])
+    contador = ContadorPintas(cacho)
+    arbitro = ArbitroRonda(contador)
+
+    cantidad_apostada = 3
+    puede_calzar = arbitro.puede_calzar(cantidad_apostada)
+    assert puede_calzar == True
+
+
+def test_no_puede_calzar():
+    cacho = Cacho([Dado(1), Dado(2), Dado(3), Dado(4), Dado(5)])
+    cacho.remover_dado()
+    cacho.remover_dado()
+    cacho.remover_dado()
+
+    # tiene solo 2 dados
+    contador = ContadorPintas(cacho)
+    arbitro = ArbitroRonda(contador)
+
+    cantidad_apostada = 5
+    puede_calzar = arbitro.puede_calzar(cantidad_apostada)
+    assert puede_calzar == False
