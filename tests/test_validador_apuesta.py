@@ -90,3 +90,50 @@ def test_cambio_de_ases_pinta_distinto_a_1():
     
     resultado = ValidadorApuesta.CambioDeAshes(pinta_actual, cantidad_actual, pinta_nueva)
     assert resultado == (5, False)
+
+#Test reglas basicas.
+def test_no_partir_con_varios_as():
+    pinta = 1
+    cantidad = 3
+    aceptado = ValidadorApuesta.ValidarApuesta(pinta, cantidad)
+    assert aceptado == False
+
+def test_partir_solo_con_un_as():
+    pinta = 1
+    cantidad = 1
+    aceptado = ValidadorApuesta.ValidarApuesta(pinta, cantidad)
+    assert aceptado == True
+
+def test_aumento_misma_pinta_valido():
+    pinta_actual = 3
+    cantidad_actual = 2
+    pinta_nueva = 3
+    cantidad_nueva = 4
+    
+    valido = ValidadorApuesta.ValidarAumentoApuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    assert valido == True
+
+def test_disminucion_misma_pinta_invalido():
+    pinta_actual = 3
+    cantidad_actual = 4
+    pinta_nueva = 3
+    cantidad_nueva = 2
+    
+    valido = ValidadorApuesta.ValidarAumentoApuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    assert valido == False
+
+def test_aumento_cantidad_misma_pinta_valido():
+    pinta_actual = 3
+    cantidad_actual = 2
+    pinta_nueva = 3
+    cantidad_nueva = 5
+    valido = ValidadorApuesta.ValidarAumentoApuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    assert valido == True
+
+def test_disminucion_cantidad_misma_pinta_valido():
+    pinta_actual = 3
+    cantidad_actual = 2
+    pinta_nueva = 3
+    cantidad_nueva = 2
+    valido = ValidadorApuesta.ValidarAumentoApuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
+    assert valido == True
