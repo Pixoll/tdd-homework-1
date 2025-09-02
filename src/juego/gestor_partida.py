@@ -12,3 +12,8 @@ class GestorPartidas:
         self.cachos = [Cacho() for _ in jugadores]
         self.num_dados = sum(cacho.cantidad_dados for cacho in self.cachos)
         self._turno_actual: int | None = None
+
+    def determinar_inicial(self) -> str:
+        jugador = random.choice(self.jugadores)
+        self._turno_actual = self.jugadores.index(jugador)
+        return jugador
