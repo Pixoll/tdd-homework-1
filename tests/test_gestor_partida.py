@@ -1,3 +1,8 @@
+import pytest
+from src.juego.dado import Dado
+from src.juego.cacho import Cacho
+from src.juego.gestor_partida import GestorPartidas
+
 def test_crear_partida_no_jugadores():
     jugadores = []
     with pytest.raises(ValueError) as exc_info:
