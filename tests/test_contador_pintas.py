@@ -6,7 +6,7 @@ from src.juego.dado import Dado
 def test_constructor():
     cacho = Cacho([Dado(1), Dado(2), Dado(3), Dado(4), Dado(5)])
     contador = ContadorPintas(cacho)
-    assert len(contador.dados) == 5
+    assert len(contador.valores_dados) == 5
 
 
 def test_contar_pinta_sin_ases():
