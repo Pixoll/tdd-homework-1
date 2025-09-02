@@ -1,29 +1,23 @@
-from enum import StrEnum
+from math import ceil
 
 from .contador_pintas import ContadorPintas
-
-
-class ResultadoDuda(StrEnum):
-    CALZAR = "calzar"
-    GANA = "gana"
-    PIERDE = "pierde"
 
 
 class ArbitroRonda:
     def __init__(self, contador: ContadorPintas) -> None:
         self.contador = contador
 
-    def dudar(self, cantidad_apostada: int, pinta: int) -> ResultadoDuda:
-        # Contar la cantidad real sin aplicar límite de comodín (usar_ases=True)
-        cantidad_real = sum(1 for valor in self.contador.valores_dados if valor == pinta or valor == 1)
+    @property
+    def total_dados_en_juego(self) -> int:
+        return len(self.contador.valores_dados)
 
-        if cantidad_real == cantidad_apostada:
-            return ResultadoDuda.CALZAR  # Exacto
-        elif cantidad_real < cantidad_apostada:
-            return ResultadoDuda.GANA  # Duda correcta
-        else:
-            return ResultadoDuda.PIERDE  # Duda incorrecta
+    def dudar(self, cantidad_apostada: int, pinta: int, usar_ases: bool) -> bool:
+        cantidad_real = self.contador.contar_pinta(pinta, usar_ases)
+        return cantidad_real < cantidad_apostada
 
-    def puede_calzar(self, cantidad_apostada: int) -> bool:
-        cantidad_jugador = len(self.contador.valores_dados)
-        return cantidad_jugador == 1 or cantidad_jugador >= cantidad_apostada / 2
+    def puede_calzar(self, cantidad_apostada: int, dados_jugador: int) -> bool:
+        return dados_jugador == 1 or cantidad_apostada >= ceil(self.total_dados_en_juego / 2)
+
+    def calzar(self, cantidad_apostada: int, pinta: int, usar_ases: bool) -> bool:
+        cantidad_real = self.contador.contar_pinta(pinta, usar_ases)
+        return cantidad_real == cantidad_apostada
