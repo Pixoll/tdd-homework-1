@@ -33,3 +33,60 @@ def test_constructor():
     validador = ValidadorApuesta(pinta=3, cantidad=5)
     assert validador.pinta == 3
     assert validador.cantidad == 5
+
+#Test regla de los Ases
+def test_cambiar_a_ases_cantidad_par():
+    pinta_actual = 3
+    cantidad_actual = 8
+
+    pinta_nueva = 1
+    cantidad_esperada = 5
+
+    confirmado = ValidadorApuesta.CambioToAses(pinta_actual, cantidad_actual, pinta_nueva)
+    assert confirmado == (cantidad_esperada, True)
+
+def test_cambiar_a_ases_cantidad_impar():
+    pinta_actual = 3
+    cantidad_actual = 7
+
+    pinta_nueva = 1
+    cantidad_esperada = 4
+    
+    aceptado = ValidadorApuesta.CambioToAses(pinta_actual, cantidad_actual, pinta_nueva)
+    assert aceptado == (cantidad_esperada, True)
+
+def test_cambio_a_ases_pinta_distinto_a_1():
+    pinta_actual = 3
+    cantidad_actual = 8
+    pinta_nueva = 2
+    
+    resultado = ValidadorApuesta.CambioToAses(pinta_actual, cantidad_actual, pinta_nueva)
+    assert resultado == (8, False)
+
+def test_cambiar_de_ases_cantidad_par():
+    pinta_actual = 1
+    cantidad_actual = 2
+
+    pinta_nueva = 3
+    cantidad_esperada = 5
+
+    aceptado = ValidadorApuesta.CambioDeAshes(pinta_actual, cantidad_actual, pinta_nueva)
+    assert aceptado == (cantidad_esperada, True)
+
+def test_cambiar_de_ases_cantidad_impar():
+    pinta_actual = 1
+    cantidad_actual = 3
+
+    pinta_nueva = 3
+    cantidad_esperada = 7
+
+    aceptado = ValidadorApuesta.CambioDeAshes(pinta_actual, cantidad_actual, pinta_nueva)
+    assert aceptado == (cantidad_esperada, True)
+
+def test_cambio_de_ases_pinta_distinto_a_1():
+    pinta_actual = 2
+    cantidad_actual = 5
+    pinta_nueva = 3
+    
+    resultado = ValidadorApuesta.CambioDeAshes(pinta_actual, cantidad_actual, pinta_nueva)
+    assert resultado == (5, False)
