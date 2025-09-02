@@ -33,3 +33,36 @@ def test_determinar_quien_inicia():
     iniciador = gestor.determinar_inicial()
     assert iniciador in jugadores
     assert gestor.jugadores[gestor._turno_actual] == iniciador
+
+def test_asigar_correcto_flujo_turnos():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    actual = gestor.determinar_inicial()
+    siguiente = gestor.get_siguiente()
+    assert siguiente != actual
+    assert siguiente in jugadores
+
+def test_asigar_incorrecto_flujo_turnos():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    with pytest.raises(RuntimeError) as exc_info:
+        actual = gestor.get_siguiente()
+    assert str(exc_info.value) == "Debes llamar primero a determinar_inicial()"
+
+def test_manejar_flujo_turnos_es_circular():
+    jugadores = ["Ana", "Pedro"]
+    gestor = GestorPartidas(jugadores)
+    actual = gestor.determinar_inicial()
+    siguiente = gestor.get_siguiente()
+    siguiente2 = gestor.get_siguiente()
+    assert siguiente2 == actual
+
+def test_manejar_flujo_turnos_es_circular_varios():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    actual = gestor.determinar_inicial()
+    siguiente = gestor.get_siguiente()
+    siguiente2 = gestor.get_siguiente()
+    assert actual!=siguiente
+    assert siguiente!=siguiente2
+    assert siguiente2!=actual
