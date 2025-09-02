@@ -17,3 +17,9 @@ class GestorPartidas:
         jugador = random.choice(self.jugadores)
         self._turno_actual = self.jugadores.index(jugador)
         return jugador
+
+    def get_siguiente(self) -> str:
+        if self._turno_actual is None:
+            raise RuntimeError("Debes llamar primero a determinar_inicial()")
+        self._turno_actual = (self._turno_actual + 1) % len(self.jugadores)
+        return self.jugadores[self._turno_actual]
