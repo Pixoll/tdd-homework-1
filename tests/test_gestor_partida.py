@@ -26,3 +26,10 @@ def test_crear_partida_varios():
     assert len(gestor.cachos) == 5
     assert all(isinstance(c, Cacho) for c in gestor.cachos)
     assert gestor.num_dados == 25
+
+def test_determinar_quien_inicia():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    iniciador = gestor.determinar_inicial()
+    assert iniciador in jugadores
+    assert gestor.jugadores[gestor._turno_actual] == iniciador
