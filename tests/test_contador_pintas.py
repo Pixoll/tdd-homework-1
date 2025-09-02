@@ -1,4 +1,4 @@
-from juego.cacho import Cacho
+from src.juego.cacho import Cacho
 from src.juego.contador_pintas import ContadorPintas
 from src.juego.dado import Dado
 

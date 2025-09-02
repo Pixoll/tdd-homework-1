@@ -1,7 +1,7 @@
 import pytest
 
-from juego.cacho import Cacho
-from juego.dado import Dado
+from src.juego.cacho import Cacho
+from src.juego.dado import Dado
 
 
 def test_cacho_cantidad_dados_iniciales():
