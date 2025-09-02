@@ -65,3 +65,14 @@ def test_duda_con_ases_apuesta_menor():
     resultado = arbitro.dudar(cantidad_apostada, pinta)
     # 2 de pinta 2 + 1 As como comodín = 3 > 1, jugador que duda pierde
     assert resultado == "jugador_pierde"
+
+
+def test_duda_con_ases_apuesta_mayor():
+    cacho = Cacho([Dado(3), Dado(2), Dado(2), Dado(3), Dado(4)])
+    contador = ContadorPintas(cacho)
+    arbitro = ArbitroRonda(contador)
+
+    cantidad_apostada = 3
+    pinta = 2
+    resultado = arbitro.dudar(cantidad_apostada, pinta)
+    assert resultado == "jugador_gana"
