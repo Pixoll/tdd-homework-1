@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from juego.cacho import Cacho
+from .cacho import Cacho
 
 
 class ContadorPintas:

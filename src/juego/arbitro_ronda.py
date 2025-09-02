@@ -1,4 +1,4 @@
-from src.juego.contador_pintas import ContadorPintas
+from .contador_pintas import ContadorPintas
 
 class ArbitroRonda:
     def __init__(self, contador: ContadorPintas) -> None:

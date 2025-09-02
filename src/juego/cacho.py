@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from juego.dado import Dado
+from .dado import Dado
 
 
 class Cacho:
