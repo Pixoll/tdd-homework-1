@@ -1,14 +1,13 @@
 from random import randint
 
-
 class Dado:
-    def __init__(self) -> None:
-        self._valor: int | None = None
+    def __init__(self, valor: int | None = None) -> None:
+        self._valor: int | None = valor
 
     def tirar(self) -> int:
-        value = randint(1, 6)
-        self._valor = value
-        return value
+        if self._valor is None:
+            self._valor = randint(1, 6)
+        return self._valor
 
     @property
     def valor(self) -> int | None:
