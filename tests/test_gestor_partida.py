@@ -66,3 +66,17 @@ def test_manejar_flujo_turnos_es_circular_varios():
     assert actual!=siguiente
     assert siguiente!=siguiente2
     assert siguiente2!=actual
+
+def test_jugador_queda_un_solo_dado():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    gestor.cachos[0]._dados = gestor.cachos[0]._dados[:1]
+    jugadores_un_dado = gestor.jugadores_con_un_dado()
+    assert len(jugadores_un_dado) == 1
+    assert jugadores_un_dado[0] == "Ana"
+
+def test_si_nadie_tiene_un_dado_lista_vacia():
+    jugadores = ["Ana", "Pedro", "Juan"]
+    gestor = GestorPartidas(jugadores)
+    jugadores_un_dado = gestor.jugadores_con_un_dado()
+    assert jugadores_un_dado == []
