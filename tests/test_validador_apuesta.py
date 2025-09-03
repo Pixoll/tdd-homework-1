@@ -1,4 +1,4 @@
-from src.juego.validador_apuesta import ValidadorApuesta
+from src.validador_apuesta import ValidadorApuesta
 
 
 def test_pinta_mayor() -> None:

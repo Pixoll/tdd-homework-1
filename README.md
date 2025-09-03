@@ -4,13 +4,12 @@
 
 ```
 src/
-├── juego/
-│   ├── dado.py
-│   ├── cacho.py
-│   ├── validador_apuesta.py
-│   ├── contador_pintas.py
-│   ├── arbitro_ronda.py
-│   └── gestor_partida.py
+├── dado.py
+├── cacho.py
+├── validador_apuesta.py
+├── contador_pintas.py
+├── arbitro_ronda.py
+└── gestor_partida.py
 tests/
 ├── test_dado.py
 ├── test_cacho.py

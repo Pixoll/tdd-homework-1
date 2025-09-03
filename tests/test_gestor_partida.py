@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from src.juego.gestor_partida import GestorPartida, ModoObligo
+from src.gestor_partida import GestorPartida, ModoObligo
 
 
 def test_no_se_puede_crear_con_un_jugador() -> None:
@@ -159,7 +159,7 @@ def test_resolver_duda_pierde_jugador_actual(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [2, 2, 2, 5, 6]
     mock_valores_jugador2 = [3, 4, 5, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
-    mocker.patch("src.juego.dado.randint", mock_randint)
+    mocker.patch("src.dado.randint", mock_randint)
 
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
@@ -176,7 +176,7 @@ def test_resolver_calzar_correcto_gana_dado(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [3, 3, 3, 4, 5]
     mock_valores_jugador2 = [3, 6, 6, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
-    mocker.patch("src.juego.dado.randint", mock_randint)
+    mocker.patch("src.dado.randint", mock_randint)
 
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
@@ -194,7 +194,7 @@ def test_resolver_calzar_incorrecto_pierde_dado(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [3, 4, 5, 6, 6]
     mock_valores_jugador2 = [4, 5, 6, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
-    mocker.patch("src.juego.dado.randint", mock_randint)
+    mocker.patch("src.dado.randint", mock_randint)
 
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
