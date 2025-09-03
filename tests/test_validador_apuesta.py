@@ -117,7 +117,7 @@ def test_cambio_especial_a_ases():
     cantidad_actual = 3
     cantidad_nueva = 2
     valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
-    return valido == True
+    assert valido == True
 
 
 def test_cambio_especial_desde_ases():
@@ -126,7 +126,7 @@ def test_cambio_especial_desde_ases():
     cantidad_actual = 2
     cantidad_nueva = 5
     valido = ValidadorApuesta.validar_aumento_apuesta(pinta_actual, cantidad_actual, pinta_nueva, cantidad_nueva)
-    return valido == True
+    assert valido == True
 
 
 def test_apuesta_invalida():

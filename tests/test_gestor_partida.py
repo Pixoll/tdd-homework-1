@@ -1,82 +1,226 @@
+from unittest.mock import MagicMock
+
 import pytest
-from src.juego.dado import Dado
-from src.juego.cacho import Cacho
-from src.juego.gestor_partida import GestorPartidas
+from pytest_mock import MockerFixture
 
-def test_crear_partida_no_jugadores():
-    jugadores = []
-    with pytest.raises(ValueError) as exc_info:
-        GestorPartidas(jugadores)
-    assert str(exc_info.value) == "Debe haber al menos un jugador"
+from src.juego.gestor_partida import GestorPartida, ModoObligo
 
-def test_crear_partida():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    assert len(gestor.jugadores) == 3
-    assert gestor.jugadores == ["Ana", "Pedro", "Juan"]
-    assert len(gestor.cachos) == 3
-    assert all(isinstance(c, Cacho) for c in gestor.cachos)
-    assert gestor.num_dados == 15
 
-def test_crear_partida_varios():
-    jugadores = ["Ana", "Pedro", "Juan", "Manolo", "Federico"]
-    gestor = GestorPartidas(jugadores)
-    assert len(gestor.jugadores) == 5
-    assert gestor.jugadores == ["Ana", "Pedro", "Juan", "Manolo", "Federico"]
-    assert len(gestor.cachos) == 5
-    assert all(isinstance(c, Cacho) for c in gestor.cachos)
-    assert gestor.num_dados == 25
+def test_no_se_puede_crear_con_un_jugador():
+    with pytest.raises(ValueError):
+        GestorPartida(["a"])
 
-def test_determinar_quien_inicia():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    iniciador = gestor.determinar_inicial()
-    assert iniciador in jugadores
-    assert gestor.jugadores[gestor._turno_actual] == iniciador
 
-def test_asigar_correcto_flujo_turnos():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    actual = gestor.determinar_inicial()
-    siguiente = gestor.get_siguiente()
-    assert siguiente != actual
-    assert siguiente in jugadores
+def test_jugadores_creados_con_cinco_dados():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(["a", "b"])
+    assert partida.jugadores == jugadores
+    assert partida.cantidad_dados == 10
+    assert all(partida.obtener_cantidad_dados_jugador(j) == 5 for j in jugadores)
 
-def test_asigar_incorrecto_flujo_turnos():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    with pytest.raises(RuntimeError) as exc_info:
-        actual = gestor.get_siguiente()
-    assert str(exc_info.value) == "Debes llamar primero a determinar_inicial()"
 
-def test_manejar_flujo_turnos_es_circular():
-    jugadores = ["Ana", "Pedro"]
-    gestor = GestorPartidas(jugadores)
-    actual = gestor.determinar_inicial()
-    siguiente = gestor.get_siguiente()
-    siguiente2 = gestor.get_siguiente()
-    assert siguiente2 == actual
+def test_juego_sin_jugador_actual_ni_anterior_al_inicio():
+    partida = GestorPartida(["a", "b", "c"])
+    assert partida.nombre_jugador_actual is None
+    assert partida.nombre_jugador_anterior is None
 
-def test_manejar_flujo_turnos_es_circular_varios():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    actual = gestor.determinar_inicial()
-    siguiente = gestor.get_siguiente()
-    siguiente2 = gestor.get_siguiente()
-    assert actual!=siguiente
-    assert siguiente!=siguiente2
-    assert siguiente2!=actual
 
-def test_jugador_queda_un_solo_dado():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    gestor.cachos[0]._dados = gestor.cachos[0]._dados[:1]
-    jugadores_un_dado = gestor.jugadores_con_un_dado()
-    assert len(jugadores_un_dado) == 1
-    assert jugadores_un_dado[0] == "Ana"
+def test_juego_no_terminado_al_inicio():
+    partida = GestorPartida(["a", "b", "c"])
+    assert partida.juego_terminado == False
+    assert partida.ganador is None
 
-def test_si_nadie_tiene_un_dado_lista_vacia():
-    jugadores = ["Ana", "Pedro", "Juan"]
-    gestor = GestorPartidas(jugadores)
-    jugadores_un_dado = gestor.jugadores_con_un_dado()
-    assert jugadores_un_dado == []
+
+def test_determinar_inicio_asigna_turno():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.determinar_jugador_inicial()
+    assert partida.nombre_jugador_actual in jugadores
+
+
+def test_establecer_jugador_inicial_existente():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    assert partida.nombre_jugador_actual == jugadores[0]
+
+
+def test_establecer_jugador_inicial_inexistente():
+    partida = GestorPartida(["a", "b"])
+    partida.establecer_jugador_inicial("c")
+    assert partida.nombre_jugador_actual is None
+
+
+def test_remover_dado_de_jugador():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.remover_dados_de_jugador(jugadores[0], 1)
+    assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 4
+
+
+def test_remover_demasiados_dados_de_jugador():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.remover_dados_de_jugador(jugadores[0], 100)
+    assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 0
+
+
+def test_quedar_inactivo_te_elimina_de_lista_de_activos():
+    jugadores = ["a", "b", "c"]
+    partida = GestorPartida(jugadores)
+    partida.remover_dados_de_jugador(jugadores[1], 5)  # b pierde todos los dados
+    assert sorted(partida.jugadores_activos) == sorted([jugadores[0], jugadores[2]])
+
+
+def test_avanzar_turno_salta_jugadores_inactivos():
+    jugadores = ["a", "b", "c"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.remover_dados_de_jugador(jugadores[1], 5)  # b pierde todos los dados
+    partida.avanzar_turno()
+    assert partida.nombre_jugador_actual == jugadores[2]
+
+
+def test_avanzar_turno_cicla_jugadores_sentido_horario():
+    jugadores = ["a", "b", "c"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])  # a
+    partida.avanzar_turno()  # b
+    partida.avanzar_turno()  # c
+    partida.avanzar_turno()  # a
+    assert partida.nombre_jugador_actual == jugadores[0]
+
+
+def test_avanzar_turno_cicla_jugadores_sentido_antihorario():
+    jugadores = ["a", "b", "c"]
+    partida = GestorPartida(jugadores)
+    partida.cambiar_sentido()
+    partida.establecer_jugador_inicial(jugadores[0])  # a
+    partida.avanzar_turno()  # c
+    partida.avanzar_turno()  # b
+    partida.avanzar_turno()  # a
+    assert partida.nombre_jugador_actual == jugadores[0]
+
+
+def test_avanzar_turno_actualiza_jugador_anterior():
+    jugadores = ["a", "b", "c"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])  # a
+    partida.avanzar_turno()  # b
+    partida.avanzar_turno()  # c
+    assert partida.nombre_jugador_anterior == jugadores[1]
+
+
+def test_cambiar_sentido():
+    partida = GestorPartida(["a", "b"])
+    assert partida.sentido == 1
+    partida.cambiar_sentido()
+    assert partida.sentido == -1
+    partida.cambiar_sentido()
+    assert partida.sentido == 1
+
+
+def test_registrar_apuesta_normal():
+    partida = GestorPartida(["a", "b"])
+    partida.registrar_apuesta(pinta=3, cantidad=2)
+    assert partida.apuesta_actual.pinta == 3
+    assert partida.apuesta_actual.cantidad == 2
+
+
+def test_registrar_apuesta_en_obligo_fija_pinta():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.remover_dados_de_jugador(jugadores[0], 4)
+    partida.activar_obligo(abierto=True)
+    partida.registrar_apuesta(pinta=4, cantidad=2)
+    assert partida.pinta_obligo == 4
+
+
+def test_resolver_duda_pierde_jugador_actual(mocker: MockerFixture):
+    mock_valores_jugador1 = [2, 2, 2, 5, 6]
+    mock_valores_jugador2 = [3, 4, 5, 6, 6]
+    mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
+    mocker.patch("src.juego.dado.randint", mock_randint)
+
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[1])
+    partida.iniciar_ronda()
+    partida.registrar_apuesta(pinta=2, cantidad=2)
+    perdedor = partida.resolver_duda(usar_ases=False)
+    assert perdedor == jugadores[1]
+    assert partida.obtener_cantidad_dados_jugador(jugadores[1]) == 4
+
+
+def test_resolver_calzar_correcto_gana_dado(mocker: MockerFixture):
+    mock_valores_jugador1 = [3, 3, 3, 4, 5]
+    mock_valores_jugador2 = [3, 6, 6, 6, 6]
+    mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
+    mocker.patch("src.juego.dado.randint", mock_randint)
+
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.remover_dados_de_jugador(jugadores[0], 1)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.iniciar_ronda()
+    partida.registrar_apuesta(pinta=3, cantidad=4)
+    ganador = partida.resolver_calzar(usar_ases=False)
+    assert ganador == jugadores[0]
+    assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 5
+
+
+def test_resolver_calzar_incorrecto_pierde_dado(mocker: MockerFixture):
+    mock_valores_jugador1 = [3, 4, 5, 6, 6]
+    mock_valores_jugador2 = [4, 5, 6, 6, 6]
+    mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
+    mocker.patch("src.juego.dado.randint", mock_randint)
+
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.iniciar_ronda()
+    partida.registrar_apuesta(pinta=3, cantidad=2)
+    perdedor = partida.resolver_calzar(usar_ases=False)
+    assert perdedor == jugadores[0]
+    assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 4
+
+
+def test_activar_obligo():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.remover_dados_de_jugador(jugadores[0], 4)
+    activado = partida.activar_obligo(abierto=True)
+    assert activado == True
+    assert partida.modo_obligo == ModoObligo.ABIERTO
+
+
+def test_iniciar_ronda_resetea_obligo():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.remover_dados_de_jugador(jugadores[0], 4)
+    partida.activar_obligo(abierto=True)
+    partida.iniciar_ronda()
+    assert partida.modo_obligo is None
+
+
+def test_activar_obligo_no_vale_si_ya_usado():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.establecer_jugador_inicial(jugadores[0])
+    partida.remover_dados_de_jugador(jugadores[0], 4)
+    partida.activar_obligo(abierto=True)
+    partida.iniciar_ronda()
+    activado = partida.activar_obligo(abierto=False)
+    assert activado == False
+    assert partida.modo_obligo is None
+
+
+def test_ganador_detectado():
+    jugadores = ["a", "b"]
+    partida = GestorPartida(jugadores)
+    partida.remover_dados_de_jugador(jugadores[1], 5)  # b pierde
+    assert partida.juego_terminado
+    assert partida.ganador == jugadores[0]
