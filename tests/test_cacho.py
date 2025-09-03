@@ -7,11 +7,13 @@ from src.juego.dado import Dado
 
 
 def test_cacho_cantidad_dados_iniciales() -> None:
+    """Verifica que un cacho recién creado tenga 5 dados."""
     cacho = Cacho()
     assert cacho.cantidad_dados == 5
 
 
 def test_cacho_tirar_dados() -> None:
+    """Verifica que tirar los dados devuelve valores entre 1 y 6."""
     cacho = Cacho()
     cacho.tirar_dados()
     assert cacho.cantidad_dados == 5
@@ -19,6 +21,7 @@ def test_cacho_tirar_dados() -> None:
 
 
 def test_cacho_tirar_dados_mock(mocker: MockerFixture) -> None:
+    """Verifica que tirar los dados con mock produce los valores esperados."""
     mock_valores_cacho = [1, 2, 3, 4, 5]
     mock_randint = MagicMock(side_effect=mock_valores_cacho)
     mocker.patch("src.juego.dado.randint", mock_randint)
@@ -30,6 +33,7 @@ def test_cacho_tirar_dados_mock(mocker: MockerFixture) -> None:
 
 
 def test_cacho_remover_dados() -> None:
+    """Verifica que remover dados disminuye la cantidad correctamente."""
     cacho = Cacho()
     cacho.remover_dado()
     assert cacho.cantidad_dados == 4
@@ -44,12 +48,14 @@ def test_cacho_remover_dados() -> None:
 
 
 def test_cacho_agregar_dados() -> None:
+    """Verifica que agregar un dado aumenta la cantidad."""
     cacho = Cacho()
     cacho.agregar_dado(Dado())
     assert cacho.cantidad_dados == 6
 
 
 def test_cacho_agregar_y_remover_dados() -> None:
+    """Verifica la secuencia de agregar y remover dados mantiene la cantidad correcta."""
     cacho = Cacho()
     cacho.remover_dado()
     assert cacho.cantidad_dados == 4

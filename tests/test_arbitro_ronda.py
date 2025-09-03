@@ -8,6 +8,7 @@ from src.juego.contador_pintas import ContadorPintas
 
 
 def test_cantidad_total_dados() -> None:
+    """Verifica que al iniciar dos cachos haya 10 dados en juego."""
     cacho1 = Cacho()
     cacho2 = Cacho()
     contador = ContadorPintas([cacho1, cacho2])
@@ -16,6 +17,7 @@ def test_cantidad_total_dados() -> None:
 
 
 def test_cantidad_total_dados_tras_remover() -> None:
+    """Verifica que al remover un dado se reduzca el total en juego."""
     cacho1 = Cacho()
     cacho2 = Cacho()
     cacho1.remover_dado()
@@ -24,8 +26,8 @@ def test_cantidad_total_dados_tras_remover() -> None:
     assert arbitro.total_dados_en_juego == 9
 
 
-# Test: duda correcta (apuesta menor que cantidad real)
 def test_duda_correcta_gana_jugador(mocker: MockerFixture) -> None:
+    """Dudar falla cuando la apuesta es menor que la cantidad real."""
     mock_valores_cacho1 = [2, 2, 3, 4, 5]
     mock_valores_cacho2 = [3, 3, 4, 5, 6]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -44,8 +46,8 @@ def test_duda_correcta_gana_jugador(mocker: MockerFixture) -> None:
     assert resultado == False
 
 
-# Test: duda con ases como comodín
 def test_duda_con_ases_como_comodin(mocker: MockerFixture) -> None:
+    """Dudar considera ases como comodines cuando usar_ases=True."""
     mock_valores_cacho1 = [1, 1, 3, 4, 5]
     mock_valores_cacho2 = [2, 2, 4, 5, 6]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -64,8 +66,8 @@ def test_duda_con_ases_como_comodin(mocker: MockerFixture) -> None:
     assert resultado == False
 
 
-# Test: duda sin ases, apuesta exacta
 def test_duda_sin_ases_apuesta_exacta(mocker: MockerFixture) -> None:
+    """Dudar falla cuando la apuesta coincide exactamente sin ases."""
     mock_valores_cacho1 = [2, 2, 3, 4, 5]
     mock_valores_cacho2 = [3, 3, 4, 5, 6]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -84,8 +86,8 @@ def test_duda_sin_ases_apuesta_exacta(mocker: MockerFixture) -> None:
     assert resultado == False
 
 
-# Test: duda con apuesta menor y ases presentes
 def test_duda_con_ases_apuesta_menor(mocker: MockerFixture) -> None:
+    """Dudar falla cuando la apuesta es menor y hay ases de comodín."""
     mock_valores_cacho1 = [1, 2, 2, 3, 4]
     mock_valores_cacho2 = [2, 3, 3, 4, 5]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -105,6 +107,7 @@ def test_duda_con_ases_apuesta_menor(mocker: MockerFixture) -> None:
 
 
 def test_duda_con_ases_apuesta_mayor(mocker: MockerFixture) -> None:
+    """Dudar resulta verdadero si la apuesta excede la cantidad real."""
     mock_valores_cacho1 = [3, 2, 2, 3, 4]
     mock_valores_cacho2 = [4, 3, 3, 4, 5]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -124,6 +127,7 @@ def test_duda_con_ases_apuesta_mayor(mocker: MockerFixture) -> None:
 
 
 def test_si_puede_calzar(mocker: MockerFixture) -> None:
+    """Verifica que se pueda calzar cuando la apuesta es suficiente."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -143,6 +147,7 @@ def test_si_puede_calzar(mocker: MockerFixture) -> None:
 
 
 def test_no_puede_calzar(mocker: MockerFixture) -> None:
+    """Verifica que no se pueda calzar cuando la apuesta es insuficiente."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -162,6 +167,7 @@ def test_no_puede_calzar(mocker: MockerFixture) -> None:
 
 
 def test_calzar_correcto_sin_ases(mocker: MockerFixture) -> None:
+    """Calzar es correcto cuando la cantidad coincide sin ases."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -181,6 +187,7 @@ def test_calzar_correcto_sin_ases(mocker: MockerFixture) -> None:
 
 
 def test_calzar_correcto_con_ases(mocker: MockerFixture) -> None:
+    """Calzar es correcto cuando la cantidad coincide usando ases."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -200,6 +207,7 @@ def test_calzar_correcto_con_ases(mocker: MockerFixture) -> None:
 
 
 def test_calzar_incorrecto_sin_ases(mocker: MockerFixture) -> None:
+    """Calzar falla cuando la cantidad no coincide sin ases."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)
@@ -219,6 +227,7 @@ def test_calzar_incorrecto_sin_ases(mocker: MockerFixture) -> None:
 
 
 def test_calzar_incorrecto_con_ases(mocker: MockerFixture) -> None:
+    """Calzar falla cuando la cantidad no coincide aun con ases."""
     mock_valores_cacho1 = [1, 2, 2, 2, 2]
     mock_valores_cacho2 = [2, 3, 3, 3, 3]
     mock_randint = MagicMock(side_effect=mock_valores_cacho1 + mock_valores_cacho2)

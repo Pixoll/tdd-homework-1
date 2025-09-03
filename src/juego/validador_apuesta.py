@@ -2,38 +2,49 @@ import math
 
 
 class ValidadorApuesta:
+    """Valida reglas y condiciones de las apuestas en el juego."""
+
     def __init__(self, pinta: int, cantidad: int) -> None:
+        """Inicializa un validador con una pinta y una cantidad."""
         self.pinta = pinta
         self.cantidad = cantidad
 
     @staticmethod
     def verificar_rango_pinta(pinta: int) -> bool:
+        """Verifica que la pinta esté entre 1 y 6."""
         return 1 <= pinta <= 6
 
     @staticmethod
     def verificar_rango_cantidad(cantidad: int) -> bool:
+        """Verifica que la cantidad sea válida (>= 1)."""
         return cantidad >= 1
 
     @staticmethod
     def cambio_a_ases(cantidad_actual: int) -> int:
+        """Convierte una apuesta normal en su equivalente con ases."""
         return (cantidad_actual // 2) + 1 if cantidad_actual % 2 == 0 else math.ceil(cantidad_actual / 2)
 
     @staticmethod
     def cambio_desde_ases(cantidad_actual: int) -> int:
+        """Convierte una apuesta con ases en su equivalente normal."""
         return (cantidad_actual * 2) + 1
 
     @staticmethod
     def validar_apuesta_general(pinta: int, cantidad: int) -> bool:
+        """Valida que la apuesta tenga pinta y cantidad correctas."""
         return ValidadorApuesta.verificar_rango_pinta(pinta) and ValidadorApuesta.verificar_rango_cantidad(cantidad)
 
     @staticmethod
     def validar_primera_apuesta(pinta: int, cantidad: int, jugador_tiene_un_dado: bool) -> bool:
+        """Valida que la primera apuesta sea válida según las reglas."""
         if pinta == 1 and not jugador_tiene_un_dado:
             return False
         return ValidadorApuesta.validar_apuesta_general(pinta, cantidad)
 
     @staticmethod
     def validar_aumento_apuesta(pinta_actual: int, cantidad_actual: int, pinta_nueva: int, cantidad_nueva: int) -> bool:
+        """Valida si una nueva apuesta es un aumento válido sobre la anterior."""
+
         # cambios especiales
         if pinta_nueva == 1 and pinta_actual != 1:
             return cantidad_nueva >= ValidadorApuesta.cambio_a_ases(cantidad_actual)

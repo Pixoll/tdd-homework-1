@@ -6,6 +6,7 @@ from src.juego.dado import Dado
 
 
 def test_tirar_dado() -> None:
+    """Verifica que tirar un dado genera un valor entre 1 y 6 y actualiza su valor."""
     dado = Dado()
     valor = dado.tirar()
     assert 1 <= valor <= 6
@@ -14,6 +15,7 @@ def test_tirar_dado() -> None:
 
 
 def test_tirar_dado_pinta(mocker: MockerFixture) -> None:
+    """Verifica que cada valor del dado corresponde a la pinta correcta."""
     mock_valores_dado = [1, 2, 3, 4, 5, 6]
     mock_randint = MagicMock(side_effect=mock_valores_dado)
     mocker.patch("src.juego.dado.randint", mock_randint)
