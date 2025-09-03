@@ -203,8 +203,7 @@ class GestorPartida:
         )
 
         if logro_calzar:
-            if jugador.cacho.cantidad_dados < 5:
-                jugador.cacho.agregar_dado()
+            jugador.cacho.agregar_dado()
         else:
             jugador.cacho.remover_dado()
 
