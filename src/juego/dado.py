@@ -11,8 +11,10 @@ class Dado:
         6: "Sexto",
     }
 
-    def __init__(self, valor: int | None = None) -> None:
-        self._valor: int | None = valor
+    _valor: int | None
+
+    def __init__(self) -> None:
+        self._valor = None
 
     def tirar(self) -> int:
         self._valor = randint(1, 6)

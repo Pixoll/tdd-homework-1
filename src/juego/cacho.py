@@ -4,8 +4,8 @@ from .dado import Dado
 
 
 class Cacho:
-    def __init__(self, dados: list[Dado] | None = None) -> None:
-        self._dados = dados or [Dado() for _ in range(5)]
+    def __init__(self) -> None:
+        self._dados = [Dado() for _ in range(5)]
 
     def tirar_dados(self) -> list[int]:
         return [dado.tirar() for dado in self._dados]

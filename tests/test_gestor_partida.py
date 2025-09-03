@@ -6,12 +6,12 @@ from pytest_mock import MockerFixture
 from src.juego.gestor_partida import GestorPartida, ModoObligo
 
 
-def test_no_se_puede_crear_con_un_jugador():
+def test_no_se_puede_crear_con_un_jugador() -> None:
     with pytest.raises(ValueError):
         GestorPartida(["a"])
 
 
-def test_jugadores_creados_con_cinco_dados():
+def test_jugadores_creados_con_cinco_dados() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(["a", "b"])
     assert partida.jugadores == jugadores
@@ -19,60 +19,60 @@ def test_jugadores_creados_con_cinco_dados():
     assert all(partida.obtener_cantidad_dados_jugador(j) == 5 for j in jugadores)
 
 
-def test_juego_sin_jugador_actual_ni_anterior_al_inicio():
+def test_juego_sin_jugador_actual_ni_anterior_al_inicio() -> None:
     partida = GestorPartida(["a", "b", "c"])
     assert partida.nombre_jugador_actual is None
     assert partida.nombre_jugador_anterior is None
 
 
-def test_juego_no_terminado_al_inicio():
+def test_juego_no_terminado_al_inicio() -> None:
     partida = GestorPartida(["a", "b", "c"])
     assert partida.juego_terminado == False
     assert partida.ganador is None
 
 
-def test_determinar_inicio_asigna_turno():
+def test_determinar_inicio_asigna_turno() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.determinar_jugador_inicial()
     assert partida.nombre_jugador_actual in jugadores
 
 
-def test_establecer_jugador_inicial_existente():
+def test_establecer_jugador_inicial_existente() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
     assert partida.nombre_jugador_actual == jugadores[0]
 
 
-def test_establecer_jugador_inicial_inexistente():
+def test_establecer_jugador_inicial_inexistente() -> None:
     partida = GestorPartida(["a", "b"])
     partida.establecer_jugador_inicial("c")
     assert partida.nombre_jugador_actual is None
 
 
-def test_remover_dado_de_jugador():
+def test_remover_dado_de_jugador() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.remover_dados_de_jugador(jugadores[0], 1)
     assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 4
 
 
-def test_remover_demasiados_dados_de_jugador():
+def test_remover_demasiados_dados_de_jugador() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.remover_dados_de_jugador(jugadores[0], 100)
     assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 0
 
 
-def test_quedar_inactivo_te_elimina_de_lista_de_activos():
+def test_quedar_inactivo_te_elimina_de_lista_de_activos() -> None:
     jugadores = ["a", "b", "c"]
     partida = GestorPartida(jugadores)
     partida.remover_dados_de_jugador(jugadores[1], 5)  # b pierde todos los dados
     assert sorted(partida.jugadores_activos) == sorted([jugadores[0], jugadores[2]])
 
 
-def test_avanzar_turno_salta_jugadores_inactivos():
+def test_avanzar_turno_salta_jugadores_inactivos() -> None:
     jugadores = ["a", "b", "c"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
@@ -81,7 +81,7 @@ def test_avanzar_turno_salta_jugadores_inactivos():
     assert partida.nombre_jugador_actual == jugadores[2]
 
 
-def test_avanzar_turno_cicla_jugadores_sentido_horario():
+def test_avanzar_turno_cicla_jugadores_sentido_horario() -> None:
     jugadores = ["a", "b", "c"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])  # a
@@ -91,7 +91,7 @@ def test_avanzar_turno_cicla_jugadores_sentido_horario():
     assert partida.nombre_jugador_actual == jugadores[0]
 
 
-def test_avanzar_turno_cicla_jugadores_sentido_antihorario():
+def test_avanzar_turno_cicla_jugadores_sentido_antihorario() -> None:
     jugadores = ["a", "b", "c"]
     partida = GestorPartida(jugadores)
     partida.cambiar_sentido()
@@ -102,7 +102,7 @@ def test_avanzar_turno_cicla_jugadores_sentido_antihorario():
     assert partida.nombre_jugador_actual == jugadores[0]
 
 
-def test_avanzar_turno_actualiza_jugador_anterior():
+def test_avanzar_turno_actualiza_jugador_anterior() -> None:
     jugadores = ["a", "b", "c"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])  # a
@@ -111,7 +111,7 @@ def test_avanzar_turno_actualiza_jugador_anterior():
     assert partida.nombre_jugador_anterior == jugadores[1]
 
 
-def test_cambiar_sentido():
+def test_cambiar_sentido() -> None:
     partida = GestorPartida(["a", "b"])
     assert partida.sentido == 1
     partida.cambiar_sentido()
@@ -120,14 +120,14 @@ def test_cambiar_sentido():
     assert partida.sentido == 1
 
 
-def test_registrar_apuesta_normal():
+def test_registrar_apuesta_normal() -> None:
     partida = GestorPartida(["a", "b"])
     partida.registrar_apuesta(pinta=3, cantidad=2)
     assert partida.apuesta_actual.pinta == 3
     assert partida.apuesta_actual.cantidad == 2
 
 
-def test_registrar_apuesta_en_obligo_fija_pinta():
+def test_registrar_apuesta_en_obligo_fija_pinta() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
@@ -137,7 +137,7 @@ def test_registrar_apuesta_en_obligo_fija_pinta():
     assert partida.pinta_obligo == 4
 
 
-def test_resolver_duda_pierde_jugador_actual(mocker: MockerFixture):
+def test_resolver_duda_pierde_jugador_actual(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [2, 2, 2, 5, 6]
     mock_valores_jugador2 = [3, 4, 5, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
@@ -153,7 +153,7 @@ def test_resolver_duda_pierde_jugador_actual(mocker: MockerFixture):
     assert partida.obtener_cantidad_dados_jugador(jugadores[1]) == 4
 
 
-def test_resolver_calzar_correcto_gana_dado(mocker: MockerFixture):
+def test_resolver_calzar_correcto_gana_dado(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [3, 3, 3, 4, 5]
     mock_valores_jugador2 = [3, 6, 6, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
@@ -170,7 +170,7 @@ def test_resolver_calzar_correcto_gana_dado(mocker: MockerFixture):
     assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 5
 
 
-def test_resolver_calzar_incorrecto_pierde_dado(mocker: MockerFixture):
+def test_resolver_calzar_incorrecto_pierde_dado(mocker: MockerFixture) -> None:
     mock_valores_jugador1 = [3, 4, 5, 6, 6]
     mock_valores_jugador2 = [4, 5, 6, 6, 6]
     mock_randint = MagicMock(side_effect=mock_valores_jugador1 + mock_valores_jugador2)
@@ -186,7 +186,7 @@ def test_resolver_calzar_incorrecto_pierde_dado(mocker: MockerFixture):
     assert partida.obtener_cantidad_dados_jugador(jugadores[0]) == 4
 
 
-def test_activar_obligo():
+def test_activar_obligo() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
@@ -196,7 +196,7 @@ def test_activar_obligo():
     assert partida.modo_obligo == ModoObligo.ABIERTO
 
 
-def test_iniciar_ronda_resetea_obligo():
+def test_iniciar_ronda_resetea_obligo() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
@@ -206,7 +206,7 @@ def test_iniciar_ronda_resetea_obligo():
     assert partida.modo_obligo is None
 
 
-def test_activar_obligo_no_vale_si_ya_usado():
+def test_activar_obligo_no_vale_si_ya_usado() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.establecer_jugador_inicial(jugadores[0])
@@ -218,7 +218,7 @@ def test_activar_obligo_no_vale_si_ya_usado():
     assert partida.modo_obligo is None
 
 
-def test_ganador_detectado():
+def test_ganador_detectado() -> None:
     jugadores = ["a", "b"]
     partida = GestorPartida(jugadores)
     partida.remover_dados_de_jugador(jugadores[1], 5)  # b pierde

@@ -1,3 +1,7 @@
+from unittest.mock import MagicMock
+
+from pytest_mock import MockerFixture
+
 from src.juego.dado import Dado
 
 
@@ -9,16 +13,33 @@ def test_tirar_dado() -> None:
     assert valor == dado.valor
 
 
-def test_tirar_dado_pinta() -> None:
-    dado = Dado(1)
+def test_tirar_dado_pinta(mocker: MockerFixture) -> None:
+    mock_valores_dado = [1, 2, 3, 4, 5, 6]
+    mock_randint = MagicMock(side_effect=mock_valores_dado)
+    mocker.patch("src.juego.dado.randint", mock_randint)
+
+    dado = Dado()
+
+    dado.tirar()
+    assert dado.valor == 1
     assert dado.pinta == "As"
-    dado = Dado(2)
+
+    dado.tirar()
+    assert dado.valor == 2
     assert dado.pinta == "Tonto"
-    dado = Dado(3)
+
+    dado.tirar()
+    assert dado.valor == 3
     assert dado.pinta == "Tren"
-    dado = Dado(4)
+
+    dado.tirar()
+    assert dado.valor == 4
     assert dado.pinta == "Cuadra"
-    dado = Dado(5)
+
+    dado.tirar()
+    assert dado.valor == 5
     assert dado.pinta == "Quina"
-    dado = Dado(6)
+
+    dado.tirar()
+    assert dado.valor == 6
     assert dado.pinta == "Sexto"
